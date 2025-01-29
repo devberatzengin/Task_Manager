@@ -1,0 +1,2 @@
+1;mail1;member1;pass1
+2;mail2;member2;pass2
