@@ -30,15 +30,15 @@ public class TaskManager {
         System.out.println("\n✅ Task created successfully!");
     }
 
-    public void listTasks() {
-        if (tasks.isEmpty()) {
-            System.out.println("No tasks available.");
-            return;
+        public void listTasks() {
+            if (tasks.isEmpty()) {
+                System.out.println("No tasks available.");
+                return;
+            }
+            for (Task task : tasks) {
+                System.out.println(task);
+            }
         }
-        for (Task task : tasks) {
-            System.out.println(task);
-        }
-    }
 
     public void saveTasksToFile(String filename) {
         try (FileWriter writer = new FileWriter(filename, true)) {
