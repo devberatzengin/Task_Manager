@@ -7,6 +7,7 @@ public class Admin extends AUser {
     private String adminUserName;
     private String adminPassword;
     private String adminEmail;
+    private TaskManager taskManager;
 
     Admin(String text) {
         if (text.equalsIgnoreCase("new")) {
@@ -14,6 +15,7 @@ public class Admin extends AUser {
             this.taskManager = new TaskManager();
         }
     }
+
     Admin() {
         this.taskManager = new TaskManager();
     }
@@ -31,8 +33,7 @@ public class Admin extends AUser {
         System.out.print("\nPlease enter your Password: ");
         adminPassword = scanner.nextLine().trim();
 
-        this.adminID = getNextAdminID(); //getNextAdminID() metotodu mevcut id ler arasından en buyuk olanun bir fazlasını döndürü o yüzden yeni register olacak olan kişinin id si budur
-
+        this.adminID = getNextAdminID();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("admin.txt", true))) {
             writer.write(this.adminID + ";" + this.adminEmail + ";" + this.adminUserName + ";" + this.adminPassword);
@@ -56,12 +57,14 @@ public class Admin extends AUser {
                     } catch (NumberFormatException ignored) {}
                 }
             }
-        } catch (IOException ignored) {}
-        return lastID + 1; //Yeni kullanıcının id bu olacaktır
+        } catch (IOException exception) {
+            System.out.println("Error reading data: " + exception.getMessage());
+        }
+        return lastID + 1;
     }
 
     @Override
-    public void login() {
+    public boolean login() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\nPlease enter your Username: ");
         String loginUsername = scanner.nextLine().trim();
@@ -71,9 +74,9 @@ public class Admin extends AUser {
         try (BufferedReader reader = new BufferedReader(new FileReader("admin.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";"); //; ile ayırarak 4 ana bilgiye ulaşıyoruz
+                String[] parts = line.split(";");
                 if (parts.length == 4) {
-                    int id = Integer.parseInt(parts[0]); // int a çeviriyoruz
+                    int id = Integer.parseInt(parts[0]);
                     String email = parts[1];
                     String username = parts[2];
                     String password = parts[3];
@@ -83,7 +86,7 @@ public class Admin extends AUser {
                         this.adminUserName = username;
                         this.adminPassword = password;
                         System.out.println("✅ Admin Login Successful! Your Admin ID: " + this.adminID);
-                        return;
+                        return true;
                     }
                 }
             }
@@ -91,6 +94,7 @@ public class Admin extends AUser {
             System.out.println("❌ Error reading the file: " + e.getMessage());
         }
         System.out.println("❌ Admin Login Failed. Incorrect username or password.");
+        return false;
     }
 
     @Override
@@ -131,7 +135,7 @@ public class Admin extends AUser {
                 if (parts.length == 4) {
                     try {
                         int adminFileID = Integer.parseInt(parts[0]);
-                        if (adminFileID == id) {                // id kısmı tuttugu taktirde belitilen indexteki değeri günceller
+                        if (adminFileID == id) {
                             parts[fieldIndex] = newValue;
                             updated = true;
                         }
@@ -152,6 +156,25 @@ public class Admin extends AUser {
         } else {
             tempFile.delete();
             System.out.println("❌ Admin ID not found.");
+        }
+    }
+
+
+    public void viewAllTasks() {
+        System.out.println("\n===== ALL TASKS =====");
+        taskManager.listTasks();
+    }
+
+
+    public void deleteTask() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("\nEnter Task ID to delete: ");
+        int taskId = scanner.nextInt();
+
+        if (taskManager.deleteTaskById(taskId)) {
+            System.out.println("✅ Task deleted successfully!");
+        } else {
+            System.out.println("❌ Task not found!");
         }
     }
 }

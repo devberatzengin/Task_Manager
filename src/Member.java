@@ -60,7 +60,7 @@ public class Member extends AUser {
     }
 
     @Override
-    public void login() {
+    public boolean login() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("\nPlease enter your Username: ");
         String loginUsername = scanner.nextLine().trim();
@@ -82,7 +82,7 @@ public class Member extends AUser {
                         this.memberUserName = username;
                         this.memberPassword = password;
                         System.out.println("✅ Member Login Successful! Your Member ID: " + this.memberID);
-                        return;
+                        return true;
                     }
                 }
             }
@@ -90,6 +90,7 @@ public class Member extends AUser {
             System.out.println("❌ Error reading the file: " + e.getMessage());
         }
         System.out.println("❌ Member Login Failed. Incorrect username or password.");
+        return false;
     }
 
     @Override

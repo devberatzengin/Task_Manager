@@ -2,7 +2,7 @@ public abstract class AUser {
 
 
     abstract void register();
-    abstract void login();
+    abstract boolean login();
 
 
     protected TaskManager taskManager;
